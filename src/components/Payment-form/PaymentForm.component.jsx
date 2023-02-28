@@ -9,7 +9,6 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import Button, {buttonCategory} from "../Button/Button.component";
 
 import {PaymentFormContainer, FormContainer, PaymentButton} from './PaymentForm.style'
-import { toast } from "react-toastify";
 
 const PaymentForm = () => {
   const amount= useSelector(selectNewCartTotal);
@@ -18,7 +17,7 @@ const PaymentForm = () => {
   const elements = useElements();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-    const PaymentHandler = async(e) => {
+    const paymentHandler = async(e) => {
         e.preventDefault();
 
         if(!stripe || !elements){
@@ -32,13 +31,15 @@ const PaymentForm = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ amount: amount*100}),
-          }).then((res) => {
-            return res.json();
-          });
-          console.log(response);
+            body: JSON.stringify({ amount: amount*8256 }),
+          }).then(res => res.json());
+
+
       
           const clientSecret = response.paymentIntent.client_secret;
+
+          console.log(amount);
+        
       
           const paymentResult = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
@@ -52,16 +53,17 @@ const PaymentForm = () => {
           setIsProcessingPayment(false);
 
           if (paymentResult.error) {
-            toast("error", paymentResult.error.message, {type:'error'});
+            alert("error", paymentResult.error.message, {type:'error'});
+            console.log(paymentResult.error);
           } else {
             if (paymentResult.paymentIntent.status === 'succeeded') {
-              toast('Payment Successful!', {type:'success'});
+              alert('Payment Successful!', {type:'success'});
             }
           }
         };
     return(
         <PaymentFormContainer>
-            <FormContainer onSubmit={PaymentHandler}>
+            <FormContainer onSubmit={paymentHandler}>
                 <h2>Credit Card Payment :</h2>
                 <CardElement />
                 <PaymentButton isProcessing={isProcessingPayment} buttonType={buttonCategory.inverted}>
