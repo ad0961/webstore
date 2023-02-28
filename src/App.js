@@ -12,6 +12,8 @@ import { useEffect } from "react";
 
 import { useDispatch } from "react-redux";
 import {setCurrentUser, checkUserSession} from "../src/Redux Store/user/User.action";
+import Success from "./Routes/Success/success.component";
+import Error from "./Routes/error/Error.component";
 
 
 
@@ -41,6 +43,8 @@ const App= () => {
         <Route path="shop/*" element={<Shop />}/>
         <Route path="auth" element={<Authenticate />}/>
         <Route path="checkout" element={<Checkout />}/>
+        <Route path="success" element={<Success />}/>
+        <Route path="error" element={<Error />}/>
       </Route>
     </Routes>
   )
